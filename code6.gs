@@ -36,6 +36,19 @@ function forwardMessage(chat_id, from_chat_id, message_id) {
 }
 
 
+function sendSticker(chat_id, sticker) {
+  let data = {
+    method: "post",
+    payload: {
+      method: "sendSticker",
+      chat_id: String(chat_id),
+      sticker: sticker,
+    }
+  }; 
+  UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/', data)
+}
+
+
 
 
 function doPost(e) {
@@ -55,6 +68,7 @@ function doPost(e) {
     if (text === '/start') {
       sendText(chat_id, "Напишите команду");
       cache.putAll({'step': '-1'}); 
+      sendSticker(chat_id, hi_sticker);
     }
   } else {
     if (cache.get('step') === '-1') {
@@ -235,5 +249,20 @@ function fun1() {
     console.log(num--);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
