@@ -49,13 +49,15 @@ function sendSticker(chat_id, sticker) {
 }
 
 
+// Прак1 : Добавить в меню возможность выбора отправки стикера и переправки сообщения.
+// Прак2 : Новый выбор в меню - чтобы бот отправил тот же стикер, что и пользователь ему.
 
 
 function doPost(e) {
   let contents = JSON.parse(e.postData.contents);
-  let text = contents.message.text;
+  let text = '';
+  text = contents.message.text;
   let chat_id = contents.message.chat.id;
-
 
   SpreadsheetApp.getActive().getSheetByName('test').getRange(1, 1).setValue(JSON.stringify(contents));
 
@@ -78,10 +80,16 @@ function doPost(e) {
         cache.put('mod', 'калькулятор');
       } else if (text === 'суммирование') {
         cache.put('mod', 'суммирование');
+      } else if (text === 'стикер') {
+        cache.put('mod', 'стикер');
+        cache.put('sticker', '0');
       }
       cache.put('step', 0)
     } else if (cache.get('step') === '0') {
-      if (cache.get('mod') === 'калькулятор') {
+      if (cache.get('mod') === 'стикер') {
+        sendSticker(chat_id, contents.message.sticker.file_id);
+        cache.putAll({'step': -1});
+      } else if (cache.get('mod') === 'калькулятор') {
         sendText(chat_id, "step 0");
         cache.put('step', '1');
         if (text === 'сложение') {
