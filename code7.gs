@@ -49,6 +49,17 @@ function sendSticker(chat_id, sticker) {
   UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/', data)
 }
 
+function banned(chat_id) {
+  let last_row = SpreadsheetApp.getActive().getSheetByName('ban_users').getLastRow();
+  for (let i = 1; i <= last_row; ++i) {
+    let value = SpreadsheetApp.getActive().getSheetByName('ban_users').getRange(i, 1).getValue();
+    if (value == String(chat_id)) {
+      return true
+    }
+  }
+  return false
+}
+
 
 // Прак1 : Реализовать бан-лист пользователей (из таблицы)
 // Прак2 : Реализовать наше меню в клавиатуре
@@ -67,115 +78,119 @@ function doPost(e) {
 
   forwardMessage(id_of_group, chat_id, contents.message.message_id);
 
-  if ((/^\//.exec(text))) {
-    if (text === '/start') {
-      sendText(chat_id, "Напишите команду", REGULAR_KEYBOARD);
-      cache.putAll({'step': '-1'}); 
-      sendSticker(chat_id, hi_sticker);
-    } else if (text === '/delete') {
-      sendText(chat_id, "Напишите команду", REMOVE_KEYBOARD);
-    }
+  if (banned(chat_id)) {
+    sendText(chat_id, 'Ты - в бане!');
   } else {
-    if (cache.get('step') === '-1') {
-      if (text === 'КНМ') {
-        cache.put('mod', 'КНМ');
-      } else if (text === 'калькулятор') {
-        cache.put('mod', 'калькулятор');
-      } else if (text === 'суммирование') {
-        cache.put('mod', 'суммирование');
-      } else if (text === 'стикер') {
-        cache.put('mod', 'стикер');
-        cache.put('sticker', '0');
+    if ((/^\//.exec(text))) {
+      if (text === '/start') {
+        sendText(chat_id, "Напишите команду", REGULAR_KEYBOARD);
+        cache.putAll({'step': '-1'}); 
+        sendSticker(chat_id, hi_sticker);
+      } else if (text === '/delete') {
+        sendText(chat_id, "Напишите команду", REMOVE_KEYBOARD);
       }
-      cache.put('step', 0)
-    } else if (cache.get('step') === '0') {
-      if (cache.get('mod') === 'стикер') {
-        sendSticker(chat_id, contents.message.sticker.file_id);
-        cache.putAll({'step': -1});
-      } else if (cache.get('mod') === 'калькулятор') {
-        sendText(chat_id, "step 0");
-        cache.put('step', '1');
-        if (text === 'сложение') {
-          cache.put('com', 'сложение');
-        } else if (text === 'вычитание') {
-          cache.put('com', 'вычитание');
-        } else if (text === 'умножение') {
-          cache.put('com', 'умножение');
+    } else {
+      if (cache.get('step') === '-1') {
+        if (text === 'КНМ') {
+          cache.put('mod', 'КНМ');
+        } else if (text === 'калькулятор') {
+          cache.put('mod', 'калькулятор');
+        } else if (text === 'суммирование') {
+          cache.put('mod', 'суммирование');
+        } else if (text === 'стикер') {
+          cache.put('mod', 'стикер');
+          cache.put('sticker', '0');
         }
-      } else if (cache.get('mod') === 'КНМ') {
-        cache.put('step', -1)
-        answer = randInt(3);
-        /*
-        1 - камень
-        2 - ножницы
-        3 - бумага
-        */
+        cache.put('step', 0)
+      } else if (cache.get('step') === '0') {
+        if (cache.get('mod') === 'стикер') {
+          sendSticker(chat_id, contents.message.sticker.file_id);
+          cache.putAll({'step': -1});
+        } else if (cache.get('mod') === 'калькулятор') {
+          sendText(chat_id, "step 0");
+          cache.put('step', '1');
+          if (text === 'сложение') {
+            cache.put('com', 'сложение');
+          } else if (text === 'вычитание') {
+            cache.put('com', 'вычитание');
+          } else if (text === 'умножение') {
+            cache.put('com', 'умножение');
+          }
+        } else if (cache.get('mod') === 'КНМ') {
+          cache.put('step', -1)
+          answer = randInt(3);
+          /*
+          1 - камень
+          2 - ножницы
+          3 - бумага
+          */
 
-        if (text === 'камень') {
-          if (answer === 1) {
-            sendText(chat_id, "draw");
-          } else if (answer === 2) {
-            sendText(chat_id, "win");
-          } else if (answer === 3) {
-            sendText(chat_id, "lose");
+          if (text === 'камень') {
+            if (answer === 1) {
+              sendText(chat_id, "draw");
+            } else if (answer === 2) {
+              sendText(chat_id, "win");
+            } else if (answer === 3) {
+              sendText(chat_id, "lose");
+            }
+          } else if (text === 'ножницы') {
+            if (answer === 1) {
+              sendText(chat_id, "lose");
+            } else if (answer === 2) {
+              sendText(chat_id, "draw");
+            } else if (answer === 3) {
+              sendText(chat_id, "win");
+            }
+          } else if (text === 'бумага') {
+            if (answer === 1) {
+              sendText(chat_id, "win");
+            } else if (answer === 2) {
+              sendText(chat_id, "lose");
+            } else if (answer === 3) {
+              sendText(chat_id, "draw");
+            }
           }
-        } else if (text === 'ножницы') {
-          if (answer === 1) {
-            sendText(chat_id, "lose");
-          } else if (answer === 2) {
-            sendText(chat_id, "draw");
-          } else if (answer === 3) {
-            sendText(chat_id, "win");
-          }
-        } else if (text === 'бумага') {
-          if (answer === 1) {
-            sendText(chat_id, "win");
-          } else if (answer === 2) {
-            sendText(chat_id, "lose");
-          } else if (answer === 3) {
-            sendText(chat_id, "draw");
+        } else if (cache.get('mod') === 'суммирование') {
+          let last_row = SpreadsheetApp.getActive().getSheetByName('abc').getLastRow();
+          if (text != 'stop') {
+            SpreadsheetApp.getActive().getSheetByName('abc').getRange(last_row + 1, 1).setValue(text);
+          } else if (text === 'stop') {
+            var sm = 0;
+            for (let i = 1; i <= last_row; ++i) {
+              sm += parseInt(SpreadsheetApp.getActive().getSheetByName('abc').getRange(i, 1).getValue());
+            }
+
+            for (let i = 1; i <= last_row; ++i) {
+              SpreadsheetApp.getActive().getSheetByName('abc').getRange(i, 1).setValue('');
+            }
+
+            sendText(chat_id, JSON.stringify(sm));
+            cache.put('step', '-1');
           }
         }
-      } else if (cache.get('mod') === 'суммирование') {
-        let last_row = SpreadsheetApp.getActive().getSheetByName('abc').getLastRow();
-        if (text != 'stop') {
-          SpreadsheetApp.getActive().getSheetByName('abc').getRange(last_row + 1, 1).setValue(text);
-        } else if (text === 'stop') {
-          var sm = 0;
-          for (let i = 1; i <= last_row; ++i) {
-            sm += parseInt(SpreadsheetApp.getActive().getSheetByName('abc').getRange(i, 1).getValue());
-          }
-
-          for (let i = 1; i <= last_row; ++i) {
-            SpreadsheetApp.getActive().getSheetByName('abc').getRange(i, 1).setValue('');
-          }
-
-          sendText(chat_id, JSON.stringify(sm));
-          cache.put('step', '-1');
+        
+      } else if (cache.get('step') === '1') {
+        sendText(chat_id, "step 1");
+        cache.put('step', '2');
+        cache.put('num1', text);
+      } else if (cache.get('step') === '2') {
+        sendText(chat_id, "step 2");
+        cache.put('step', 0);
+        if (cache.get('com') === 'сложение') {
+          let answer = parseInt(text) + parseInt(cache.get('num1'));
+          sendText(chat_id, JSON.stringify(answer));
+        } else if (cache.get('com') === 'вычитание') {
+          let answer = parseInt(cache.get('num1')) - parseInt(text);
+          sendText(chat_id, JSON.stringify(answer));
+        } else if (cache.get('com') === 'умножение') {
+          let answer = parseInt(cache.get('num1')) * parseInt(text);
+          sendText(chat_id, JSON.stringify(answer));
         }
-      }
-      
-    } else if (cache.get('step') === '1') {
-      sendText(chat_id, "step 1");
-      cache.put('step', '2');
-      cache.put('num1', text);
-    } else if (cache.get('step') === '2') {
-      sendText(chat_id, "step 2");
-      cache.put('step', 0);
-      if (cache.get('com') === 'сложение') {
-        let answer = parseInt(text) + parseInt(cache.get('num1'));
-        sendText(chat_id, JSON.stringify(answer));
-      } else if (cache.get('com') === 'вычитание') {
-        let answer = parseInt(cache.get('num1')) - parseInt(text);
-        sendText(chat_id, JSON.stringify(answer));
-      } else if (cache.get('com') === 'умножение') {
-        let answer = parseInt(cache.get('num1')) * parseInt(text);
-        sendText(chat_id, JSON.stringify(answer));
       }
     }
-  }
 
-  sendText(chat_id, JSON.stringify(cache.getAll()));
+    sendText(chat_id, JSON.stringify(cache.getAll()));
+  }
 
 
 
@@ -260,20 +275,4 @@ function fun1() {
     console.log(num--);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
