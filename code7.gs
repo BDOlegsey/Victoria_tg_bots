@@ -37,13 +37,14 @@ function forwardMessage(chat_id, from_chat_id, message_id) {
 }
 
 
-function sendSticker(chat_id, sticker) {
+function sendSticker(chat_id, sticker, keyboard) {
   let data = {
     method: "post",
     payload: {
       method: "sendSticker",
       chat_id: String(chat_id),
       sticker: sticker,
+      reply_markup: JSON.stringify(keyboard)
     }
   }; 
   UrlFetchApp.fetch('https://api.telegram.org/bot' + token + '/', data)
@@ -63,6 +64,7 @@ function banned(chat_id) {
 
 // Прак1 : Реализовать бан-лист пользователей (из таблицы)
 // Прак2 : Реализовать наше меню в клавиатуре
+// Бонусный прак : КНМ реализовать через клавиатуру
 
 
 function doPost(e) {
@@ -83,7 +85,7 @@ function doPost(e) {
   } else {
     if ((/^\//.exec(text))) {
       if (text === '/start') {
-        sendText(chat_id, "Напишите команду", REGULAR_KEYBOARD);
+        sendText(chat_id, "Напишите команду", START_KEYBOARD);
         cache.putAll({'step': '-1'}); 
         sendSticker(chat_id, hi_sticker);
       } else if (text === '/delete') {
@@ -104,7 +106,7 @@ function doPost(e) {
         cache.put('step', 0)
       } else if (cache.get('step') === '0') {
         if (cache.get('mod') === 'стикер') {
-          sendSticker(chat_id, contents.message.sticker.file_id);
+          sendSticker(chat_id, contents.message.sticker.file_id, START_KEYBOARD);
           cache.putAll({'step': -1});
         } else if (cache.get('mod') === 'калькулятор') {
           sendText(chat_id, "step 0");
@@ -150,6 +152,7 @@ function doPost(e) {
               sendText(chat_id, "draw");
             }
           }
+          sendText(chat_id, "Напишите команду", START_KEYBOARD);
         } else if (cache.get('mod') === 'суммирование') {
           let last_row = SpreadsheetApp.getActive().getSheetByName('abc').getLastRow();
           if (text != 'stop') {
@@ -164,7 +167,7 @@ function doPost(e) {
               SpreadsheetApp.getActive().getSheetByName('abc').getRange(i, 1).setValue('');
             }
 
-            sendText(chat_id, JSON.stringify(sm));
+            sendText(chat_id, JSON.stringify(sm), START_KEYBOARD);
             cache.put('step', '-1');
           }
         }
@@ -275,4 +278,3 @@ function fun1() {
     console.log(num--);
   }
 }
-
