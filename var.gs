@@ -12,6 +12,24 @@ let REGULAR_KEYBOARD = {
   "resize_keyboard": true,
 };
 
+let START_KEYBOARD = {
+  "keyboard": [
+    [{ "text": "КНМ" }, { "text": "калькулятор" }],
+    [{ "text": "суммирование" }, { "text": "стикер" }]
+  ],
+  "resize_keyboard": true,
+  "one_time_keyboard": true,
+};
+
+let RSP_KEYBOARD = {
+  "keyboard": [
+    [{ "text": "камень" }, { "text": "ножницы" }, { "text": "бумага" }]
+  ],
+  "resize_keyboard": true,
+  "one_time_keyboard": true,
+};
+
+
 let REMOVE_KEYBOARD = {
   remove_keyboard: true
 }
