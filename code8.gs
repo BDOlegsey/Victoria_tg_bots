@@ -118,6 +118,14 @@ function doPost(e) {
         let last_time = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(1, last_column).getValue();
 
         if (JSON.stringify(date.getMinutes()) != last_time) {
+          var sum = 0;
+          for (let i = 2; i < last_row_in_col(last_column - 2); ++i) {
+            sum += JSON.parse(SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(i, last_column - 2).getValue());
+          }
+          for (let i = 2; i < last_row_in_col(last_column - 1); ++i) {
+            sum -= JSON.parse(SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(i, last_column - 1).getValue());
+          }
+          SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(3, last_column).setValue(JSON.stringify(sum));
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(1, last_column + 3).setValue(JSON.stringify(date.getMinutes()))
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(2, last_column + 3).setValue('Итог');
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(1, last_column + 2).setValue('Убыль');
@@ -128,6 +136,10 @@ function doPost(e) {
           last_column = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getLastColumn();
           let last_row = last_row_in_col(last_column - 2);
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(last_row, last_column - 2).setValue(text);
+        } else if (cache.get('ch') ===  'Убыль') {
+          last_column = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getLastColumn();
+          let last_row = last_row_in_col(last_column - 1);
+          SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(last_row, last_column - 1).setValue(text);
         }
       } 
     }
