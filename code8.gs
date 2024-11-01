@@ -61,6 +61,14 @@ function banned(chat_id) {
   return false
 }
 
+function last_row_in_col(n) {
+  let ind = 1;
+  while (!SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(ind, n).isBlank()) {
+    ind++;
+  }
+  return ind;
+}
+
 
 // Прак1 : Прога для ведения финансов: Пользователь может вносить свою прибыль и откуда она
 // Прак2 : Прога для ведения финансов: Пользователь может вносить свои убытки и откуда они
@@ -108,7 +116,7 @@ function doPost(e) {
         cache.put('step', '-1');
         let last_column = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getLastColumn();
         let last_time = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(1, last_column).getValue();
-        
+
         if (JSON.stringify(date.getMinutes()) != last_time) {
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(1, last_column + 3).setValue(JSON.stringify(date.getMinutes()))
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(2, last_column + 3).setValue('Итог');
@@ -117,7 +125,8 @@ function doPost(e) {
         }
 
         if (cache.get('ch') ===  'Прибыль') {
-          let last_row = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getLastRow();
+          last_column = SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getLastColumn();
+          let last_row = last_row_in_col(last_column - 2);
           SpreadsheetApp.getActive().getSheetByName('Учёт Финансов').getRange(last_row, last_column - 2).setValue(text);
         }
       } 
