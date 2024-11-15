@@ -61,16 +61,16 @@ let REMOVE_KEYBOARD = {
 
 class Player {
   constructor(name) {
-    this._name = name;
+    this.name = name;
   }
   sayHi() {
-    console.log('Hello! I`m ' + this.name);
+    console.log('Hello! I`m ' + this._name);
   }
   get name() {
     return this._name;
   }
   set name(value) {
-    if (value === 'Petya') {
+    if (value === 'Ivan') {
       console.log('I am not Petya');
       return;
     } else {
@@ -80,7 +80,7 @@ class Player {
 }
 
 function test() {
-  let player = new Player('Petya');
+  let player = new Player('Ivan');
 
   Player.prototype.sayhello = function() {
     console.log('Hello world!');
@@ -92,6 +92,44 @@ function test() {
 
 
 
+
+
+
+class Matrix {
+  constructor() {
+    this.mat = [
+            ['0', '0', '0'],
+            ['0', '0', '0'],
+            ['0', '0', '0']
+          ];
+    this.keyboard = {
+      "keyboard": [
+        [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
+        [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
+        [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
+      ],
+      "resize_keyboard": true,
+      "one_time_keyboard": true,
+    };
+  }
+
+  update() {
+    for (let i = 1; i <= 3; ++i) {
+      for (let j = 1; j <= 3; ++j) {
+        mat[i - 1][j - 1] = SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).getValue();
+      }
+    }
+    this.keyboard = {
+      "keyboard": [
+        [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
+        [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
+        [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
+      ],
+      "resize_keyboard": true,
+      "one_time_keyboard": true,
+    };
+  }
+}
 
 
 
