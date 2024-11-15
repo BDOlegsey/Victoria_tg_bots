@@ -57,3 +57,53 @@ let Inl_KEYBOARD = {
 let REMOVE_KEYBOARD = {
   remove_keyboard: true
 }
+
+
+class Player {
+  constructor(name) {
+    this._name = name;
+  }
+  sayHi() {
+    console.log('Hello! I`m ' + this.name);
+  }
+  get name() {
+    return this._name;
+  }
+  set name(value) {
+    if (value === 'Petya') {
+      console.log('I am not Petya');
+      return;
+    } else {
+      this._name = value;
+    }
+  }
+}
+
+function test() {
+  let player = new Player('Petya');
+
+  Player.prototype.sayhello = function() {
+    console.log('Hello world!');
+  }
+
+  player.sayHi();
+  player.sayhello();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
