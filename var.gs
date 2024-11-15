@@ -4,12 +4,6 @@ let cache = CacheService.getUserCache();
 
 let hi_sticker = 'CAACAgIAAxkBAAONZxKDIuNy8FKyEXzoQf4a5Onsd30AAmYSAAJGR8hLPzanbsxr4Vk2BA';
 
-let mat = [
-            ['0', '0', '0'],
-            ['0', '0', '0'],
-            ['0', '0', '0']
-          ]
-
 
 let REGULAR_KEYBOARD = {
   "keyboard": [
@@ -104,9 +98,9 @@ class Matrix {
           ];
     this.keyboard = {
       "keyboard": [
-        [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
-        [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
-        [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
+        [{ "text": '1' + this.mat[0][0] }, { "text": '2s' + this.mat[0][1] }, { "text": '3' + this.mat[0][2] }],
+        [{ "text": '4' + this.mat[1][0] }, { "text": '5' + this.mat[1][1] }, { "text": '6' + this.mat[1][2] }],
+        [{ "text": '7' + this.mat[2][0] }, { "text": '8' + this.mat[2][1] }, { "text": '9' + this.mat[2][2] }],
       ],
       "resize_keyboard": true,
       "one_time_keyboard": true,
@@ -116,18 +110,48 @@ class Matrix {
   update() {
     for (let i = 1; i <= 3; ++i) {
       for (let j = 1; j <= 3; ++j) {
-        mat[i - 1][j - 1] = SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).getValue();
+        this.mat[i - 1][j - 1] = SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).getValue();
       }
     }
     this.keyboard = {
       "keyboard": [
-        [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
-        [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
-        [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
+        [{ "text": '1' + this.mat[0][0] }, { "text": '2s' + this.mat[0][1] }, { "text": '3' + this.mat[0][2] }],
+        [{ "text": '4' + this.mat[1][0] }, { "text": '5' + this.mat[1][1] }, { "text": '6' + this.mat[1][2] }],
+        [{ "text": '7' + this.mat[2][0] }, { "text": '8' + this.mat[2][1] }, { "text": '9' + this.mat[2][2] }],
       ],
       "resize_keyboard": true,
       "one_time_keyboard": true,
     };
+  }
+
+  new_turn(value) {
+    if (value == '1') {
+      this.mat[0][0] = '1'
+    } else if (value == '2') {
+      this.mat[0][1] = '1'
+    } else if (value == '3') {
+      this.mat[0][2] = '1'
+    } else if (value == '4') {
+      this.mat[1][0] = '1'
+    } else if (value == '5') {
+      this.mat[1][1] = '1'
+    } else if (value == '6') {
+      this.mat[1][2] = '1'
+    } else if (value == '7') {
+      this.mat[2][0] = '1'
+    } else if (value == '8') {
+      this.mat[2][1] = '1'
+    } else if (value == '9') {
+      this.mat[2][2] = '1'
+    }
+  }
+
+  get_cell(i, j) {
+    return this.mat[i][j];
+  }
+
+  set_cell(i, j, value) {
+    this.mat[i][j] = value;
   }
 }
 
