@@ -89,6 +89,8 @@ function last_row_in_col(n) {
 
 
 function doPost(e) {
+  matrix = new Matrix();
+
   let contents = JSON.parse(e.postData.contents);
   let text = '';
   text = contents.message.text;
@@ -131,30 +133,9 @@ function doPost(e) {
       } else if (cache.get('step') == '0') {
         
         if (cache.get('ch') == 'ttt') {
-          let TTT_KEYBOARD = {
-              "keyboard": [
-                [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
-                [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
-                [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
-              ],
-              "resize_keyboard": true,
-              "one_time_keyboard": true,
-            };
-          sendText(chat_id, "Game start!", TTT_KEYBOARD);
+          sendText(chat_id, "Game start!", matrix.keyboard);
           cache.put('step', '1');
-          mat = [
-            ['0', '0', '0'],
-            ['0', '0', '0'],
-            ['0', '0', '0']
-          ]
-          for (let i = 1; i <= 3; ++i) {
-            for (let j = 1; j <= 3; ++j) {
-              mat[i - 1][j - 1] = SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).getValue();
-            }
-          }
-
-          
-
+          matrix.update();
 
         } else if (cache.get('ch') != 'ttt') {
           cache.put('step', '-1');
@@ -187,11 +168,7 @@ function doPost(e) {
           }
       } 
         } else if (cache.get('step') == '1') {
-          for (let i = 1; i <= 3; ++i) {
-            for (let j = 1; j <= 3; ++j) {
-              mat[i - 1][j - 1] = SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).getValue();
-            }
-          }
+          matrix.update();
 
           if (text[0] == '1') {
             mat[0][0] = 1
@@ -229,16 +206,8 @@ function doPost(e) {
                 SpreadsheetApp.getActive().getSheetByName('ttt').getRange(i, j).setValue(String(mat[i - 1][j - 1]));
               }
             }
-            let TTT_KEYBOARD = {
-            "keyboard": [
-              [{ "text": '1' + mat[0][0] }, { "text": '2s' + mat[0][1] }, { "text": '3' + mat[0][2] }],
-              [{ "text": '4' + mat[1][0] }, { "text": '5' + mat[1][1] }, { "text": '6' + mat[1][2] }],
-              [{ "text": '7' + mat[2][0] }, { "text": '8' + mat[2][1] }, { "text": '9' + mat[2][2] }],
-            ],
-            "resize_keyboard": true,
-            "one_time_keyboard": true,
-          };
-            sendText(chat_id, 'Следующий ход', TTT_KEYBOARD);
+            matrix.update();
+            sendText(chat_id, 'Следующий ход', matrix.keyboard);
           } else {
             cache.put('step', '-1');
             sendText(chat_id, 'Game over', START_KEYBOARD);
@@ -314,3 +283,20 @@ function fun1() {
     console.log(num--);
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
