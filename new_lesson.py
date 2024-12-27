@@ -15,6 +15,11 @@ def start(message):
 
 @bot.message_handler(content_types=['text'])
 def get_text_message(message):
+    try:
+        a = int(message.text)
+        bot.send_message(message.from_user.id, str(3 * a))
+    except:
+        pass
     if message.text == 'Hello!':
         bot.send_message(message.from_user.id, 'already helloed!')
     else:
